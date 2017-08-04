@@ -1,7 +1,6 @@
 const path = require('path');
 
-
-const PATHS =  {
+const PATHS = {
 	entry: path.join(__dirname, 'client/src/index.js'),
 	output: path.join(__dirname, 'client/public'),
 	src: path.join(__dirname, 'client/src')
@@ -11,19 +10,20 @@ const config = {
 	entry: PATHS.entry,
 	output: {
 		path: PATHS.output,
-		filename: 'bundle.js',
+		filename: 'bundle.js'
 	},
 	resolve: {
-		extensions: ['.js', '.jsx', '.json'] 
-	}
+		extensions: ['.js', '.jsx', '.json']
+	},
 	module: {
 		rules: [
 			{
-				text: /\.jsx?$/,
+				test: /\.jsx?$/,
 				loader: 'babel-loader',
-				include: PATHS.src
+				include: PATHS.src,
+				exclude: /node_modules/,
 				query: {
-					presets: ["react"]
+					presets: ['react']
 				}
 			}
 		]

@@ -1,5 +1,5 @@
-import combineReducers from 'redux';
-import { ADD_ITEM, USE_ITEM, CHANGE_SCENCE } from './action';
+import { combineReducers } from 'redux';
+import { ADD_ITEM, USE_ITEM, CHANGE_SCENE } from './actions';
 
 const addItem = (state = {}, action) => {
 	if (action.type === ADD_ITEM) {
@@ -16,12 +16,12 @@ const useItem = (state = {}, action) => {
 };
 
 const changeScene = (state = {}, action) => {
-	if (action.type === CHANGE_SCENCE) {
+	if (action.type === CHANGE_SCENE) {
 		return action.payload;
 	}
 	return state;
 };
 
-const rootReducer = combineReducers(addItem, useItem, changeScene);
+const rootReducer = combineReducers({ addItem, useItem, changeScene });
 
 export default rootReducer;
