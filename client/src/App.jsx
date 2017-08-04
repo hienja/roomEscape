@@ -9,9 +9,10 @@ const App = () =>
 				<h1>Room Escape</h1>
 			</div>
 			<div className="app">
-				<div className="scene" />
+				<div className="scene">
+					<img className="img" src="client/public/chemistry-laboratory.png" />
+				</div>
 				<div className="console">
-					<div />
 					<form>
 						<input type="text" name="text" placeholder="Type here..." />
 					</form>
