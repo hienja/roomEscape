@@ -1,0 +1,21 @@
+{
+	"name": "room_escape",
+	"version": "1.0.0",
+	"description": "Room escape text-based game",
+	"main": "index.js",
+	"repository": {
+		"type": "git",
+		"url": "git+https://github.com/hienja/roomEscape.git"
+	},
+	"author": "Hien Tran",
+	"license": "ISC",
+	"bugs": {
+		"url": "https://github.com/hienja/roomEscape/issues"
+	},
+	"homepage": "https://github.com/hienja/roomEscape#readme",
+	"scripts": {
+		"build": "npm run webpack",
+		"watch": "npm run webpack-dev-server",
+		"test": "echo \"Error: no test specified\" && exit 1"
+	}
+}
