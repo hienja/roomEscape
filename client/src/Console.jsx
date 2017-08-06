@@ -6,21 +6,19 @@ class Console extends Component {
 	constructor() {
 		super();
 	}
-	action(event) {
-		console.log(event.target[0].value.split(' '));
-		return { type: '' };
-	}
 	render() {
 		return (
 			<div className="console">
 				<div className="window">
-					{this.props.handleInventory.inventory.map((value, i) =>
-						<div key={i}>
-							{value}
-						</div>
-					)}
+					{this.props.dialogue
+						? this.props.dialogue.map((value, i) =>
+								<div key={i}>
+									{value}
+								</div>
+							)
+						: ''}
 				</div>
-				<form onSubmit={this.action.bind(this)}>
+				<form onSubmit={this.props.handlingInventory}>
 					<input type="text" name="text" placeholder="Type here..." />
 				</form>
 			</div>
@@ -28,14 +26,20 @@ class Console extends Component {
 	}
 }
 
-const mapStateToProps = (state, props) => {
-	return state;
+const mapStateToProps = state => {
+	return {
+		inventory: state.inventory,
+		dialogue: state.dialogue,
+		location: state.location
+	};
 };
 
 const mapDispatchToProps = dispatch => {
 	return {
-		// addItem: dispatch(addingItem(action(event))),
-		// useItem: dispatch(usingItem(action(event))),
+		handlingInventory: event => {
+			event.preventDefault();
+			dispatch(handlingInventory(event.target.children[0].value));
+		}
 		// changeScene: dispatch(changingScene(event))
 	};
 };
