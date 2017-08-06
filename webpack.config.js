@@ -1,4 +1,5 @@
 const path = require('path');
+const webpack = require('webpack');
 
 const PATHS = {
 	entry: path.join(__dirname, 'client/src/index.js'),
@@ -27,7 +28,14 @@ const config = {
 				}
 			}
 		]
-	}
+	},
+	devServer: {
+		publicPath: PATHS.output,
+		hot: true,
+		inline: true,
+		progress: true
+	},
+	plugins: [new webpack.HotModuleReplacementPlugin(), new webpack.NamedModulesPlugin()]
 };
 
 module.exports = config;

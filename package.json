@@ -1,33 +1,34 @@
 {
-	"name": "room_escape",
-	"version": "1.0.0",
-	"description": "Room escape text-based game",
-	"main": "index.js",
-	"repository": {
-		"type": "git",
-		"url": "git+https://github.com/hienja/roomEscape.git"
-	},
-	"author": "Hien Tran",
-	"license": "ISC",
-	"bugs": {
-		"url": "https://github.com/hienja/roomEscape/issues"
-	},
-	"homepage": "https://github.com/hienja/roomEscape#readme",
-	"scripts": {
-		"build": "webpack",
-		"watch": "webpack-dev-server",
-		"test": "echo \"Error: no test specified\" && exit 1"
-	},
-	"dependencies": {
-		"babel": "^6.23.0",
-		"babel-cli": "^6.24.1",
-		"babel-core": "^6.25.0",
-		"babel-loader": "^7.1.1",
-		"babel-preset-react": "^6.24.1",
-		"react": "^15.6.1",
-		"react-dom": "^15.6.1",
-		"react-redux": "^5.0.5",
-		"redux": "^3.7.2",
-		"webpack": "^3.4.1"
-	}
+  "name": "room_escape",
+  "version": "1.0.0",
+  "description": "Room escape text-based game",
+  "main": "index.js",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/hienja/roomEscape.git"
+  },
+  "author": "Hien Tran",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/hienja/roomEscape/issues"
+  },
+  "homepage": "https://github.com/hienja/roomEscape#readme",
+  "scripts": {
+    "build": "webpack",
+    "server": "webpack-dev-server",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "dependencies": {
+    "babel": "^6.23.0",
+    "babel-cli": "^6.24.1",
+    "babel-core": "^6.25.0",
+    "babel-loader": "^7.1.1",
+    "babel-preset-react": "^6.24.1",
+    "react": "^15.6.1",
+    "react-dom": "^15.6.1",
+    "react-redux": "^5.0.5",
+    "redux": "^3.7.2",
+    "webpack": "^3.4.1",
+    "webpack-dev-server": "^2.6.1"
+  }
 }
