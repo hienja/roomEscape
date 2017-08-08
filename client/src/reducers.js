@@ -6,23 +6,23 @@ const initialState = {
 	location: 'default'
 };
 
-const setInventory = (state, action) => {
+const setInventory = (state, payload) => {
 	var newState = Object.assign({}, state);
-	newState.handleInput.inventory.item = acid;
+	newState.dialogue.push(payload);
 	return newState;
 };
 
 const handleInput = (state = initialState, action) => {
 	if (action.type === ADD_ITEM) {
 		console.log('adding item');
-		return { inventory: { acid: true }, dialogue: ['Invalid'] };
+		return setInventory(state, action.payload);
 	} else if (action.type === USE_ITEM) {
 		console.log('using item');
-		return setInventory(state, action);
+		return setInventory(state, action.payload);
 	} else if (action.type === CHANGE_SCENE) {
 		return setInventory(state, action);
 	} else if (action.type === INVALID) {
-		return setInventory(state, action);
+		return setInventory(state, action.payload);
 	}
 	console.log('returning null from handleInput');
 	return state;

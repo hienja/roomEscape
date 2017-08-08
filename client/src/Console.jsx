@@ -3,15 +3,12 @@ import { connect } from 'react-redux';
 import { handlingInventory, changingScene } from './actions';
 
 class Console extends Component {
-	constructor() {
-		super();
-	}
 	render() {
 		return (
 			<div className="console">
 				<div className="window">
-					{this.props.dialogue
-						? this.props.dialogue.map((value, i) =>
+					{this.props.gameProps.dialogue
+						? this.props.gameProps.dialogue.map((value, i) =>
 								<div key={i}>
 									{value}
 								</div>
@@ -28,9 +25,11 @@ class Console extends Component {
 
 const mapStateToProps = state => {
 	return {
-		inventory: state.inventory,
-		dialogue: state.dialogue,
-		location: state.location
+		gameProps: {
+			inventory: state.inventory,
+			dialogue: state.dialogue,
+			location: state.location
+		}
 	};
 };
 
