@@ -10,13 +10,18 @@ img {
 }
 
 .scene {
-	width: 50%;
-	display: inline-block;
+	position: relative;
+	width: 40%;
 	padding: 10pt;
+	display: inline-block;
 }
 
 .console {
 	width: 30%;
 	display: inline-block;
 	padding: 10pt;
+}
+
+.window {
+	height: 80%;
 }
