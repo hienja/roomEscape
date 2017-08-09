@@ -10,12 +10,17 @@ let itemCheck = {
 		useWords: ['use']
 	}
 };
-const invalidResponse = 'Invalid action.';
+let location = 'chemistry-laboratory';
 
-export const handlingInventory = (input, state) => {
+const invalidResponse = 'invalid action';
+
+export const handlingInput = (input, state) => {
 	var input = input.split(' ');
 	if (input) {
-		if (input.length == 2) {
+		if (input[0] === 'move') {
+			location = location === 'chemistry-laboratory' ? 'harass' : 'chemistry-laboratory';
+			return { type: CHANGE_SCENE, payload: location };
+		} else if (input.length == 2) {
 			if (itemCheck[input[1]]) {
 				if (itemCheck[input[1]].have === false) {
 					if (itemCheck[input[1]].pickupWords.indexOf(input[0]) >= 0) {
