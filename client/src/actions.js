@@ -3,36 +3,57 @@ export const USE_ITEM = 'USE_ITEM';
 export const CHANGE_SCENE = 'CHANGE_SCENE';
 export const INVALID = 'INVALID';
 
-let itemCheck = {
-	acid: {
-		have: false,
-		pickupWords: ['pickup'],
-		useWords: ['use']
-	}
+// let laboratory, harass;
+let itemCheck = {};
+let laboratory = {
+	forward: null,
+	back: 'harass',
+	left: null,
+	right: null,
+	pickup: ['acid']
 };
-let location = 'chemistry-laboratory';
+let harass = {
+	forward: null,
+	back: 'chemistry-laboratory',
+	left: null,
+	right: null,
+	use: ['acid']
+};
+let scene = {
+	'chemistry-laboratory': laboratory,
+	harass: harass
+};
+let currentLocation = 'chemistry-laboratory';
 
 const invalidResponse = 'invalid action';
 
 export const handlingInput = (input, state) => {
-	var input = input.split(' ');
-	if (input) {
-		if (input[0] === 'move') {
-			location = location === 'chemistry-laboratory' ? 'harass' : 'chemistry-laboratory';
-			return { type: CHANGE_SCENE, payload: location };
-		} else if (input.length == 2) {
-			if (itemCheck[input[1]]) {
-				if (itemCheck[input[1]].have === false) {
-					if (itemCheck[input[1]].pickupWords.indexOf(input[0]) >= 0) {
-						itemCheck[input[1]].have = true;
-						const text = input[0] + ' ' + input[1];
-						return { type: ADD_ITEM, payload: text };
-					}
-				} else {
-					if (itemCheck[input[1]].useWords.indexOf(input[0]) >= 0) {
-						itemCheck[input[1]].have = undefined;
-						const text = input[0] + ' ' + input[1];
-						return { type: USE_ITEM, payload: text };
+	const inputWords = input.split(' ');
+	const inputVerb = inputWords[0];
+	const inputNoun = inputWords[1];
+	const currentLocationVerb = scene[currentLocation][inputVerb];
+	const currentLocationNoun = scene[currentLocation][inputNoun];
+	if (inputWords) {
+		if (inputVerb === 'move') {
+			if (currentLocationNoun) {
+				currentLocation = currentLocationNoun;
+				return { type: CHANGE_SCENE, payload: currentLocation };
+			}
+		} else if (inputWords.length == 2) {
+			if (currentLocationVerb) {
+				if (currentLocationVerb.indexOf(inputNoun) >= 0) {
+					if (inputVerb === 'pickup') {
+						if (itemCheck[inputNoun] === undefined) {
+							itemCheck[inputNoun] = true;
+							const text = `${inputVerb} ${inputNoun}`;
+							return { type: ADD_ITEM, payload: text };
+						}
+					} else {
+						if (itemCheck[inputNoun]) {
+							itemCheck[inputNoun] = null;
+							const text = `${inputVerb} ${inputNoun}`;
+							return { type: USE_ITEM, payload: text };
+						}
 					}
 				}
 			}
@@ -41,8 +62,4 @@ export const handlingInput = (input, state) => {
 	}
 	console.log('returning null from action');
 	return { type: null };
-};
-
-export const changingScene = scene => {
-	return { type: CHANGE_SCENE, payload: scene };
 };

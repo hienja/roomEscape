@@ -37,6 +37,7 @@ const mapDispatchToProps = dispatch => {
 		handlingInput: event => {
 			event.preventDefault();
 			dispatch(handlingInput(event.target.children[0].value));
+			event.target.reset();
 		}
 	};
 };
