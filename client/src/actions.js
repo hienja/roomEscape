@@ -1,14 +1,22 @@
-export const ADD_ITEM = 'ADD_ITEM';
-export const USE_ITEM = 'USE_ITEM';
+export const ADD_DIALOGUE = 'ADD_DIALOGUE';
 export const CHANGE_SCENE = 'CHANGE_SCENE';
-export const INVALID = 'INVALID';
 
 const invalidResponse = 'invalid action';
+const needKeyResponse = 'need key';
 const validCheckWords = ['check', 'examine', 'inspect', 'scan', 'survey'];
 const validGrabWords = ['grab', 'take', 'gather'];
 const validUseWords = ['use'];
 let itemCheck = {};
+let checkForKey = function() {
+	if (this.key) {
+		return itemCheck[this.key] ? this.name : undefined;
+	}
+	return this.name;
+};
 let lab = {
+	name: 'lab',
+	key: 'lab key',
+	checkForKey: checkForKey,
 	forward: null,
 	back: 'hallway',
 	left: null,
@@ -20,6 +28,8 @@ let lab = {
 	}
 };
 let monster = {
+	name: 'monster',
+	checkForKey: checkForKey,
 	forward: null,
 	back: 'hallway',
 	left: null,
@@ -27,12 +37,16 @@ let monster = {
 	use: ['acid']
 };
 let hallway = {
+	name: 'hallway',
+	checkForKey: checkForKey,
 	forward: 'monster',
 	back: 'storage',
-	left: ['lab', 'lab key'],
+	left: 'lab',
 	right: 'bathroom'
 };
 let bathroom = {
+	name: 'bathroom',
+	checkForKey: checkForKey,
 	forward: null,
 	back: 'hallway',
 	left: null,
@@ -46,12 +60,17 @@ let bathroom = {
 	}
 };
 let storage = {
-	forward: ['table', 'storage key'],
+	name: 'storage',
+	checkForKey: checkForKey,
+	forward: 'table',
 	back: 'hallway',
 	left: null,
 	right: null
 };
 let table = {
+	name: 'table',
+	key: 'storage key',
+	checkForKey: checkForKey,
 	forward: null,
 	back: 'storage',
 	left: 'hole',
@@ -62,6 +81,8 @@ let table = {
 	use: ['beaker', 'acid powder', 'water']
 };
 let hole = {
+	name: 'hole',
+	checkForKey: checkForKey,
 	forward: null,
 	back: 'table',
 	left: null,
@@ -90,16 +111,11 @@ export const handlingInput = (input, state) => {
 	if (inputWords.length === 2) {
 		if (inputVerb === 'move') {
 			if (nounInCurrentLocation) {
-				if (typeof nounInCurrentLocation === 'object') {
-					console.log(itemCheck);
-					if (itemCheck[nounInCurrentLocation[1]]) {
-						itemCheck[nounInCurrentLocation[1]] = null;
-						currentLocation = nounInCurrentLocation[0];
-						return { type: CHANGE_SCENE, payload: currentLocation };
-					}
-				} else {
-					currentLocation = nounInCurrentLocation;
+				if (scene[nounInCurrentLocation].checkForKey()) {
+					currentLocation = scene[nounInCurrentLocation].name;
 					return { type: CHANGE_SCENE, payload: currentLocation };
+				} else {
+					return { type: ADD_DIALOGUE, payload: needKeyResponse };
 				}
 			}
 		} else if (inputVerb === 'grab') {
@@ -109,7 +125,7 @@ export const handlingInput = (input, state) => {
 						itemCheck[verbInCurrentLocation[inputNoun]] = true;
 						console.log(itemCheck);
 						const text = `${inputVerb} ${verbInCurrentLocation[inputNoun]}`;
-						return { type: ADD_ITEM, payload: text };
+						return { type: ADD_DIALOGUE, payload: text };
 					}
 				}
 			}
@@ -119,7 +135,7 @@ export const handlingInput = (input, state) => {
 					if (itemCheck[verbInCurrentLocation[inputNoun][1]] === undefined) {
 						itemCheck[verbInCurrentLocation[inputNoun][1]] = true;
 						const text = `grab ${verbInCurrentLocation[inputNoun][0]}`;
-						return { type: ADD_ITEM, payload: text };
+						return { type: ADD_DIALOGUE, payload: text };
 					}
 				}
 			}
@@ -129,12 +145,11 @@ export const handlingInput = (input, state) => {
 					if (itemCheck[inputNoun]) {
 						itemCheck[inputNoun] = null;
 						const text = `${inputVerb} ${inputNoun}`;
-						return { type: USE_ITEM, payload: text };
+						return { type: ADD_DIALOGUE, payload: text };
 					}
 				}
 			}
 		}
 	}
-	console.log('returning null from action');
-	return { type: INVALID, payload: invalidResponse };
+	return { type: ADD_DIALOGUE, payload: invalidResponse };
 };
