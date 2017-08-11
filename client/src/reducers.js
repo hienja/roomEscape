@@ -2,7 +2,7 @@ import { ADD_ITEM, USE_ITEM, CHANGE_SCENE, INVALID } from './actions';
 
 const initialState = {
 	dialogue: ['Type two words. Verb then noun.'],
-	location: 'chemistry-laboratory'
+	location: 'hallway'
 };
 
 const setInventory = (state, payload) => {

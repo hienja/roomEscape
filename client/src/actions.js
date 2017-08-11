@@ -5,25 +5,66 @@ export const INVALID = 'INVALID';
 
 // let laboratory, harass;
 let itemCheck = {};
-let laboratory = {
+let lab = {
 	forward: null,
-	back: 'harass',
+	back: 'hallway',
 	left: null,
 	right: null,
-	pickup: ['acid']
+	pickup: ['beaker', 'coat', 'key']
 };
-let harass = {
+let monster = {
 	forward: null,
-	back: 'chemistry-laboratory',
+	back: 'hallway',
 	left: null,
 	right: null,
 	use: ['acid']
 };
-let scene = {
-	'chemistry-laboratory': laboratory,
-	harass: harass
+let hallway = {
+	forward: 'monster',
+	back: 'storage',
+	left: 'lab',
+	right: 'bathroom',
+	use: ['key']
 };
-let currentLocation = 'chemistry-laboratory';
+let bathroom = {
+	forward: null,
+	back: 'hallway',
+	left: null,
+	right: null,
+	pickup: ['broken mirror', 'storage key', 'water']
+};
+let storage = {
+	forward: 'table',
+	back: 'hallway',
+	left: null,
+	right: null,
+	use: ['storage key']
+};
+let table = {
+	forward: null,
+	back: 'storage',
+	left: 'hole',
+	right: null,
+	pickup: ['acid powder'],
+	use: ['beaker', 'acid powder', 'water']
+};
+let hole = {
+	forward: null,
+	back: 'table',
+	left: null,
+	right: null,
+	pickup: ['lab key']
+};
+let scene = {
+	lab,
+	monster,
+	hallway,
+	bathroom,
+	storage,
+	table,
+	hole
+};
+let currentLocation = 'hallway';
 
 const invalidResponse = 'invalid action';
 
