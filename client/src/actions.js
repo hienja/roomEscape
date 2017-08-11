@@ -3,14 +3,21 @@ export const USE_ITEM = 'USE_ITEM';
 export const CHANGE_SCENE = 'CHANGE_SCENE';
 export const INVALID = 'INVALID';
 
-// let laboratory, harass;
+const invalidResponse = 'invalid action';
+const validCheckWords = ['check', 'examine', 'inspect', 'scan', 'survey'];
+const validGrabWords = ['grab', 'take', 'gather'];
+const validUseWords = ['use'];
 let itemCheck = {};
 let lab = {
 	forward: null,
 	back: 'hallway',
 	left: null,
 	right: null,
-	pickup: ['beaker', 'coat', 'key']
+	check: {
+		cabinet: ['beaker', 'beaker'],
+		rack: ['coat', 'coat'],
+		chair: ['key', ' exit key']
+	}
 };
 let monster = {
 	forward: null,
@@ -22,30 +29,36 @@ let monster = {
 let hallway = {
 	forward: 'monster',
 	back: 'storage',
-	left: 'lab',
-	right: 'bathroom',
-	use: ['key']
+	left: ['lab', 'lab key'],
+	right: 'bathroom'
 };
 let bathroom = {
 	forward: null,
 	back: 'hallway',
 	left: null,
 	right: null,
-	pickup: ['broken mirror', 'storage key', 'water']
+	check: {
+		toilet: ['key', 'storage key'],
+		sink: ['water', 'water']
+	},
+	grab: {
+		mirror: 'broken mirror'
+	}
 };
 let storage = {
-	forward: 'table',
+	forward: ['table', 'storage key'],
 	back: 'hallway',
 	left: null,
-	right: null,
-	use: ['storage key']
+	right: null
 };
 let table = {
 	forward: null,
 	back: 'storage',
 	left: 'hole',
 	right: null,
-	pickup: ['acid powder'],
+	check: {
+		table: ['powder', 'acid powder']
+	},
 	use: ['beaker', 'acid powder', 'water']
 };
 let hole = {
@@ -53,7 +66,9 @@ let hole = {
 	back: 'table',
 	left: null,
 	right: null,
-	pickup: ['lab key']
+	check: {
+		hole: ['key', 'lab key']
+	}
 };
 let scene = {
 	lab,
@@ -66,41 +81,60 @@ let scene = {
 };
 let currentLocation = 'hallway';
 
-const invalidResponse = 'invalid action';
-
 export const handlingInput = (input, state) => {
 	const inputWords = input.split(' ');
 	const inputVerb = inputWords[0];
 	const inputNoun = inputWords[1];
-	const currentLocationVerb = scene[currentLocation][inputVerb];
-	const currentLocationNoun = scene[currentLocation][inputNoun];
-	if (inputWords) {
+	const verbInCurrentLocation = scene[currentLocation][inputVerb];
+	const nounInCurrentLocation = scene[currentLocation][inputNoun];
+	if (inputWords.length === 2) {
 		if (inputVerb === 'move') {
-			if (currentLocationNoun) {
-				currentLocation = currentLocationNoun;
-				return { type: CHANGE_SCENE, payload: currentLocation };
+			if (nounInCurrentLocation) {
+				if (typeof nounInCurrentLocation === 'object') {
+					console.log(itemCheck);
+					if (itemCheck[nounInCurrentLocation[1]]) {
+						itemCheck[nounInCurrentLocation[1]] = null;
+						currentLocation = nounInCurrentLocation[0];
+						return { type: CHANGE_SCENE, payload: currentLocation };
+					}
+				} else {
+					currentLocation = nounInCurrentLocation;
+					return { type: CHANGE_SCENE, payload: currentLocation };
+				}
 			}
-		} else if (inputWords.length == 2) {
-			if (currentLocationVerb) {
-				if (currentLocationVerb.indexOf(inputNoun) >= 0) {
-					if (inputVerb === 'pickup') {
-						if (itemCheck[inputNoun] === undefined) {
-							itemCheck[inputNoun] = true;
-							const text = `${inputVerb} ${inputNoun}`;
-							return { type: ADD_ITEM, payload: text };
-						}
-					} else {
-						if (itemCheck[inputNoun]) {
-							itemCheck[inputNoun] = null;
-							const text = `${inputVerb} ${inputNoun}`;
-							return { type: USE_ITEM, payload: text };
-						}
+		} else if (inputVerb === 'grab') {
+			if (verbInCurrentLocation) {
+				if (verbInCurrentLocation[inputNoun]) {
+					if (itemCheck[verbInCurrentLocation[inputNoun]] === undefined) {
+						itemCheck[verbInCurrentLocation[inputNoun]] = true;
+						console.log(itemCheck);
+						const text = `${inputVerb} ${verbInCurrentLocation[inputNoun]}`;
+						return { type: ADD_ITEM, payload: text };
+					}
+				}
+			}
+		} else if (inputVerb === 'check') {
+			if (verbInCurrentLocation) {
+				if (verbInCurrentLocation[inputNoun]) {
+					if (itemCheck[verbInCurrentLocation[inputNoun][1]] === undefined) {
+						itemCheck[verbInCurrentLocation[inputNoun][1]] = true;
+						const text = `grab ${verbInCurrentLocation[inputNoun][0]}`;
+						return { type: ADD_ITEM, payload: text };
+					}
+				}
+			}
+		} else if (inputVerb === 'use') {
+			if (verbInCurrentLocation) {
+				if (verbInCurrentLocation.indexOf(inputWords) >= 0) {
+					if (itemCheck[inputNoun]) {
+						itemCheck[inputNoun] = null;
+						const text = `${inputVerb} ${inputNoun}`;
+						return { type: USE_ITEM, payload: text };
 					}
 				}
 			}
 		}
-		return { type: INVALID, payload: invalidResponse };
 	}
 	console.log('returning null from action');
-	return { type: null };
+	return { type: INVALID, payload: invalidResponse };
 };
