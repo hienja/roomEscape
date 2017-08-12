@@ -1,7 +1,7 @@
 import { ADD_DIALOGUE, CHANGE_SCENE } from './actions';
 
 const initialState = {
-	dialogue: ['Type two words. Verb then noun.'],
+	dialogue: ['type two words', 'e.g. move forward'],
 	location: 'hallway'
 };
 

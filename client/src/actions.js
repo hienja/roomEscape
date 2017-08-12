@@ -3,17 +3,34 @@ export const CHANGE_SCENE = 'CHANGE_SCENE';
 
 const invalidResponse = 'invalid action';
 const needKeyResponse = 'need key';
-const validCheckWords = ['check', 'examine', 'inspect', 'scan', 'survey'];
+const validCheckWords = ['check', 'examine', 'inspect', 'scan', 'search'];
 const validGrabWords = ['grab', 'take', 'gather'];
 const validUseWords = ['use'];
-let itemCheck = {};
-let checkForKey = function() {
+let inventory = {};
+const checkForKey = function() {
 	if (this.key) {
-		return itemCheck[this.key] ? this.name : undefined;
+		return inventory[this.key] ? this.name : undefined;
 	}
 	return this.name;
 };
-let lab = {
+const checkForRestrictionItem = function(action, item) {
+	if (this[action][item].restrictionItem) {
+		return inventory[this[action][item].restrictionItem] ? item : undefined;
+	}
+	return item;
+};
+const reduceWord = input => {
+	if (validCheckWords.indexOf(input) >= 0) {
+		return validCheckWords[0];
+	} else if (validGrabWords.indexOf(input) >= 0) {
+		return validGrabWords[0];
+	} else if (validUseWords.indexOf(input) >= 0) {
+		return validUseWords[0];
+	} else {
+		return input;
+	}
+};
+const lab = {
 	name: 'lab',
 	key: 'lab key',
 	checkForKey: checkForKey,
@@ -21,20 +38,38 @@ let lab = {
 	back: 'hallway',
 	left: null,
 	right: null,
+	checkForRestrictionItem: checkForRestrictionItem,
 	check: {
-		cabinet: ['beaker', 'beaker'],
-		rack: ['coat', 'coat'],
-		chair: ['key', ' exit key']
+		cabinet: { name: 'beaker', itemName: 'beaker' },
+		rack: { name: 'coat', itemName: 'coat' },
+		chair: { name: 'key', itemName: 'exit key' }
+	},
+	use: {
+		powder: {
+			text: 'mixed powder into beaker. got acid.',
+			itemName: 'acid powder',
+			restrictionItem: 'beaker water'
+		},
+		coat: { text: 'looking nice with that coat', itemName: 'coat' }
 	}
 };
-let monster = {
+const monster = {
 	name: 'monster',
 	checkForKey: checkForKey,
 	forward: null,
 	back: 'hallway',
 	left: null,
 	right: null,
-	use: ['acid']
+	checkForRestrictionItem: checkForRestrictionItem,
+	use: {
+		powder: {
+			text: 'mixed powder into beaker. got acid.',
+			itemName: 'acid powder',
+			restrictionItem: 'beaker water'
+		},
+		coat: { text: 'looking nice with that coat', itemName: 'coat' },
+		acid: { text: 'killed monster', itemName: 'acid' }
+	}
 };
 let hallway = {
 	name: 'hallway',
@@ -42,32 +77,59 @@ let hallway = {
 	forward: 'monster',
 	back: 'storage',
 	left: 'lab',
-	right: 'bathroom'
+	right: 'bathroom',
+	checkForRestrictionItem: checkForRestrictionItem,
+	use: {
+		powder: {
+			text: 'mixed powder into beaker. got acid.',
+			itemName: 'acid powder',
+			restrictionItem: 'beaker water'
+		},
+		coat: { text: 'looking nice with that coat', itemName: 'coat' }
+	}
 };
-let bathroom = {
+const bathroom = {
 	name: 'bathroom',
 	checkForKey: checkForKey,
 	forward: null,
 	back: 'hallway',
 	left: null,
 	right: null,
+	checkForRestrictionItem: checkForRestrictionItem,
 	check: {
-		toilet: ['key', 'storage key'],
-		sink: ['water', 'water']
+		toilet: { name: 'key', itemName: 'storage key' },
+		sink: { text: 'filled beaker with water', name: 'water', itemName: 'beaker water', restrictionItem: 'beaker' }
 	},
 	grab: {
-		mirror: 'broken mirror'
+		mirror: { name: 'broken mirror', itemName: 'broken mirror' }
+	},
+	use: {
+		powder: {
+			text: 'mixed powder into beaker. got acid.',
+			itemName: 'acid powder',
+			restrictionItem: 'beaker water'
+		},
+		coat: { text: 'looking nice with that coat', itemName: 'coat' }
 	}
 };
-let storage = {
+const storage = {
 	name: 'storage',
 	checkForKey: checkForKey,
 	forward: 'table',
 	back: 'hallway',
 	left: null,
-	right: null
+	right: null,
+	checkForRestrictionItem: checkForRestrictionItem,
+	use: {
+		powder: {
+			text: 'mixed powder into beaker. got acid.',
+			itemName: 'acid powder',
+			restrictionItem: 'beaker water'
+		},
+		coat: { text: 'looking nice with that coat', itemName: 'coat' }
+	}
 };
-let table = {
+const table = {
 	name: 'table',
 	key: 'storage key',
 	checkForKey: checkForKey,
@@ -75,77 +137,140 @@ let table = {
 	back: 'storage',
 	left: 'hole',
 	right: null,
+	checkForRestrictionItem: checkForRestrictionItem,
 	check: {
-		table: ['powder', 'acid powder']
+		table: { name: 'powder', itemName: 'acid powder' }
 	},
-	use: ['beaker', 'acid powder', 'water']
+	use: {
+		powder: {
+			text: 'mixed powder into beaker. got acid.',
+			itemName: 'acid powder',
+			restrictionItem: 'beaker water'
+		},
+		coat: { text: 'looking nice with that coat', itemName: 'coat' }
+	}
 };
-let hole = {
+const hole = {
 	name: 'hole',
 	checkForKey: checkForKey,
 	forward: null,
 	back: 'table',
 	left: null,
 	right: null,
+	checkForRestrictionItem: checkForRestrictionItem,
 	check: {
-		hole: ['key', 'lab key']
+		hole: { name: 'key', itemName: 'lab key' }
+	},
+	use: {
+		powder: {
+			text: 'mixed powder into beaker. got acid.',
+			itemName: 'acid powder',
+			restrictionItem: 'beaker water'
+		},
+		coat: { text: 'looking nice with that coat', itemName: 'coat' }
 	}
 };
-let scene = {
+const exit = {
+	name: 'exit',
+	checkForKey: checkForKey,
+	forward: 'win',
+	back: 'hallway',
+	left: null,
+	right: null,
+	checkForRestrictionItem: checkForRestrictionItem,
+	use: {
+		coat: { text: 'looking nice with that coat', itemName: 'coat' }
+	}
+};
+const win = {
+	name: 'win',
+	key: 'exit key',
+	checkForKey: checkForKey,
+	forward: null,
+	back: 'exit',
+	left: null,
+	right: null
+};
+const scene = {
 	lab,
 	monster,
 	hallway,
 	bathroom,
 	storage,
 	table,
-	hole
+	hole,
+	exit,
+	win
 };
 let currentLocation = 'hallway';
 
 export const handlingInput = (input, state) => {
 	const inputWords = input.split(' ');
-	const inputVerb = inputWords[0];
-	const inputNoun = inputWords[1];
-	const verbInCurrentLocation = scene[currentLocation][inputVerb];
-	const nounInCurrentLocation = scene[currentLocation][inputNoun];
+	const firstWord = reduceWord(inputWords[0]);
+	const secondWord = inputWords[1];
+	const actionInCurrentLocation = scene[currentLocation][firstWord];
+	const propertyOfCurrentLocation = scene[currentLocation][secondWord];
 	if (inputWords.length === 2) {
-		if (inputVerb === 'move') {
-			if (nounInCurrentLocation) {
-				if (scene[nounInCurrentLocation].checkForKey()) {
-					currentLocation = scene[nounInCurrentLocation].name;
+		if (firstWord === 'move') {
+			if (propertyOfCurrentLocation) {
+				if (scene[propertyOfCurrentLocation].checkForKey()) {
+					currentLocation = scene[propertyOfCurrentLocation].name;
 					return { type: CHANGE_SCENE, payload: currentLocation };
 				} else {
 					return { type: ADD_DIALOGUE, payload: needKeyResponse };
 				}
 			}
-		} else if (inputVerb === 'grab') {
-			if (verbInCurrentLocation) {
-				if (verbInCurrentLocation[inputNoun]) {
-					if (itemCheck[verbInCurrentLocation[inputNoun]] === undefined) {
-						itemCheck[verbInCurrentLocation[inputNoun]] = true;
-						console.log(itemCheck);
-						const text = `${inputVerb} ${verbInCurrentLocation[inputNoun]}`;
+		} else if (firstWord === 'grab') {
+			if (actionInCurrentLocation) {
+				if (actionInCurrentLocation[secondWord]) {
+					if (inventory[actionInCurrentLocation[secondWord].itemName] === undefined) {
+						inventory[actionInCurrentLocation[secondWord].itemName] = true;
+						console.log(inventory);
+						const text = actionInCurrentLocation[secondWord].text
+							? actionInCurrentLocation[secondWord].text
+							: `grabbed ${secondWord}`;
 						return { type: ADD_DIALOGUE, payload: text };
 					}
 				}
 			}
-		} else if (inputVerb === 'check') {
-			if (verbInCurrentLocation) {
-				if (verbInCurrentLocation[inputNoun]) {
-					if (itemCheck[verbInCurrentLocation[inputNoun][1]] === undefined) {
-						itemCheck[verbInCurrentLocation[inputNoun][1]] = true;
-						const text = `grab ${verbInCurrentLocation[inputNoun][0]}`;
+		} else if (firstWord === 'check') {
+			if (actionInCurrentLocation) {
+				if (actionInCurrentLocation[secondWord]) {
+					if (scene[currentLocation].checkForRestrictionItem('check', secondWord)) {
+						inventory[actionInCurrentLocation[secondWord].itemName] = true;
+						const text = actionInCurrentLocation[secondWord].text
+							? actionInCurrentLocation[secondWord].text
+							: `grabbed ${actionInCurrentLocation[secondWord].name}`;
 						return { type: ADD_DIALOGUE, payload: text };
+					}
+					if (inventory[actionInCurrentLocation[secondWord][1]] === undefined) {
 					}
 				}
 			}
-		} else if (inputVerb === 'use') {
-			if (verbInCurrentLocation) {
-				if (verbInCurrentLocation.indexOf(inputWords) >= 0) {
-					if (itemCheck[inputNoun]) {
-						itemCheck[inputNoun] = null;
-						const text = `${inputVerb} ${inputNoun}`;
-						return { type: ADD_DIALOGUE, payload: text };
+		} else if (firstWord === 'use') {
+			if (actionInCurrentLocation) {
+				if (actionInCurrentLocation[secondWord]) {
+					if (scene[currentLocation].checkForRestrictionItem('use', secondWord)) {
+						if (inventory[actionInCurrentLocation[secondWord].itemName]) {
+							if (secondWord === 'acid') {
+								inventory[actionInCurrentLocation[secondWord].itemName] = null;
+								scene['hallway'].forward = 'exit';
+								currentLocation = 'exit';
+								return { type: CHANGE_SCENE, payload: currentLocation };
+							} else if (secondWord == 'powder') {
+								inventory['acid'] = true;
+								inventory[actionInCurrentLocation[secondWord].itemName] = null;
+								const text = actionInCurrentLocation[secondWord].text
+									? actionInCurrentLocation[secondWord].text
+									: `${firstWord} ${secondWord}`;
+								return { type: ADD_DIALOGUE, payload: text };
+							}
+							inventory[actionInCurrentLocation[secondWord].itemName] = null;
+							const text = actionInCurrentLocation[secondWord].text
+								? actionInCurrentLocation[secondWord].text
+								: `${firstWord} ${secondWord}`;
+							return { type: ADD_DIALOGUE, payload: text };
+						}
 					}
 				}
 			}
