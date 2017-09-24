@@ -14,8 +14,8 @@ class Game extends Component {
 				<Scene location={this.props.gameProps.location} />
 				<div className="console">
 					<Window dialogue={this.props.gameProps.dialogue} />
-					<form onSubmit={this.props.handlingInput}>
-						<input type="text" name="text" placeholder="Type here..." />
+					<form onSubmit={this.props.handlingInput} autocomplete="off">
+						<input type="text" name="text" placeholder="Type here..." autocomplete="off" />
 					</form>
 				</div>
 			</div>

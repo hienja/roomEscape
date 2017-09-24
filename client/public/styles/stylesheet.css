@@ -19,9 +19,23 @@ img {
 .console {
 	width: 30%;
 	display: inline-block;
-	padding: 10pt;
+	padding-top: 5pt;
+	padding-bottom: 5pt;
+	font-family: monospace;
+	background-color: black;
+	color: white;
 }
 
 .window {
 	height: 80%;
+	padding: 5pt;
+}
+
+input {
+	width: 100%;
+	font-family: monospace;
+	background-color: black;
+	color: white;
+	border: none;
+	border-width: 0;
 }
